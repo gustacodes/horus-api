@@ -4,8 +4,12 @@ import com.gustalencar.horus.controller.AttendanceController;
 import com.gustalencar.horus.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateAttendanceHorusRequest;
+import models.responses.FirmHorusResponse;
+import models.responses.WorkedHoursHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -17,7 +21,12 @@ public class AttendanceControllerImpl implements AttendanceController {
 
     @Override
     public ResponseEntity<Void> save(CreateAttendanceHorusRequest request) {
-        service.save(request);
+        service.registerPoint(request);
         return ResponseEntity.status(CREATED).build();
+    }
+
+    @Override
+    public ResponseEntity<WorkedHoursHorusResponse> findById(Long userId, LocalDate date) {
+        return ResponseEntity.ok(service.calculateWorkedHours(userId, date));
     }
 }
