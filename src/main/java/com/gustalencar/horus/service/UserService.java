@@ -1,9 +1,11 @@
 package com.gustalencar.horus.service;
 
+import com.gustalencar.horus.entity.User;
 import com.gustalencar.horus.mapper.UserMapper;
 import com.gustalencar.horus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateUserHorusRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,8 +17,19 @@ public class UserService {
     private final UserMapper mapper;
 
     public void save(CreateUserHorusRequest request) {
-        firmService.find(request.firmId());
-        repository.save(mapper.fromRequest(request));
+        verifyIfCpfAlreadyExists(request.cpf());
+        var firm = firmService.find(request.firmId());
+        User user = mapper.fromRequest(request);
+        user.setFirm(firm);
+        user.setStatus(request.status());
+        repository.save(user);
+    }
+
+    private void verifyIfCpfAlreadyExists(final String cpf) {
+        repository.findByCpf(cpf)
+                .ifPresent(user -> {
+                    throw new DataIntegrityViolationException("CPF [ " + cpf + " ] already exists");
+                });
     }
 
 }
