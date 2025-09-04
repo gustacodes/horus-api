@@ -34,7 +34,7 @@ public class User {
 
     @Column(name = "USR_PROFILE")
     @Enumerated(EnumType.STRING)
-    private Set<ProfileBellopaneEnum> profiles;
+    private ProfileBellopaneEnum profile;
 
     @ManyToOne
     @JoinColumn(name = "FIRM_ID")
