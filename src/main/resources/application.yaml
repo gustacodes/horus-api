@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: horus
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/horusdb
+    username: postgres
+    password: 15421542
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: HikariPool-1
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  sql:
+    init:
+      mode: always
+
+springdoc:
+  openapi:
+    title: 'HORUS API'
+    description: 'System responsible for employee timekeeping'
+    version: '1.0.0'
