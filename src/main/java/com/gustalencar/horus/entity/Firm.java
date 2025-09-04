@@ -19,6 +19,9 @@ public class Firm {
     @Column(name = "FIRM_ID")
     private Long id;
 
+    @Column(name = "FIRM_NAME")
+    private String firmName;
+
     @Column(name = "FIRM_CNPJ")
     private String cnpj;
 

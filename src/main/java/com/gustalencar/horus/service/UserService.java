@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+    private final FirmService firmService;
     private final UserMapper mapper;
 
     public void save(CreateUserHorusRequest request) {
+        firmService.find(request.firmId());
         repository.save(mapper.fromRequest(request));
     }
 

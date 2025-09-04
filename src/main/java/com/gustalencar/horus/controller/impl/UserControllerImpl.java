@@ -20,4 +20,5 @@ public class UserControllerImpl implements UserController {
         service.save(request);
         return ResponseEntity.status(CREATED.value()).build();
     }
+
 }
