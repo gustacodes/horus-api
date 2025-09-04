@@ -6,6 +6,7 @@ import com.gustalencar.horus.repository.AttendanceRepository;
 import lombok.RequiredArgsConstructor;
 import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
+import models.exceptions.AmountOfPointsTheDayReached;
 import models.requests.CreateAttendanceHorusRequest;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.stereotype.Service;
@@ -61,11 +62,16 @@ public class AttendanceService {
 
     public WorkedHoursHorusResponse calculateWorkedHours(Long userId, LocalDate date) {
         List<Attendance> records = repository.findByUserAndDate(userId, date);
+        if (records.size() == 4) {
+            throw new AmountOfPointsTheDayReached("Quantidade de batidas do dia atingida");
+        }
+        var user = userService.find(userId);
 
         if (records.isEmpty()) {
             return new WorkedHoursHorusResponse("00:00", "00:00", "00:00", "Nenhuma batida encontrada");
         }
 
+        // Ordenar registros por data/hora
         records.sort(Comparator.comparing(Attendance::getDateTime));
 
         LocalDateTime entry = null;
@@ -74,7 +80,6 @@ public class AttendanceService {
         LocalDateTime exit = null;
         List<LocalDateTime> extras = new ArrayList<>();
 
-        // Identificar batidas
         for (Attendance record : records) {
             switch (record.getType()) {
                 case ENTRY -> entry = record.getDateTime();
@@ -87,46 +92,56 @@ public class AttendanceService {
 
         Duration totalWorked = Duration.ZERO;
 
-        // Período antes do almoço
         if (entry != null && lunchOut != null) {
             totalWorked = totalWorked.plus(Duration.between(entry, lunchOut));
         }
 
-        // Período depois do almoço
         if (lunchIn != null && exit != null) {
             totalWorked = totalWorked.plus(Duration.between(lunchIn, exit));
         }
 
-        // Caso não tenha almoço registrado
+        // Caso não haja intervalo de almoço
         if (entry != null && exit != null && lunchOut == null && lunchIn == null) {
             totalWorked = Duration.between(entry, exit);
         }
 
-        // Se houver batidas extras
-        Duration extraWorked = Duration.ZERO;
-        if (!extras.isEmpty() && exit != null) {
-            for (LocalDateTime extra : extras) {
-                extraWorked = extraWorked.plus(Duration.between(exit, extra));
-            }
+        // Definir jornada esperada
+        Duration expected;
+        if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.getPosition())) {
+            expected = Duration.ofHours(7).plusMinutes(20);
+        } else {
+            expected = Duration.ofHours(8);
         }
 
-        // Considerando jornada padrão de 8h
-        Duration expected = Duration.ofHours(7).plusMinutes(20);
-        Duration saldo = totalWorked.plus(extraWorked).minus(expected);
+        // Calcular saldo
+        Duration saldo = totalWorked.minus(expected);
+        Duration extraToShow = saldo.isNegative() ? Duration.ZERO : saldo;
 
         return new WorkedHoursHorusResponse(
                 formatDuration(totalWorked),
-                formatDuration(extraWorked),
-                formatDuration(saldo),
+                formatDuration(extraToShow),
+                formatDurationWithSign(saldo),
                 gerarMensagemStatus(entry, lunchOut, lunchIn, exit)
         );
     }
 
+    // Formata duração para HH:mm
     private String formatDuration(Duration duration) {
         long hours = duration.toHours();
-        long minutes = duration.toMinutesPart();
+        long minutes = duration.toMinutes() % 60;
         return String.format("%02d:%02d", hours, minutes);
     }
+
+    // Formata duração com sinal (+/-)
+    private String formatDurationWithSign(Duration duration) {
+        long totalMinutes = duration.toMinutes();
+        String sign = totalMinutes < 0 ? "-" : "+";
+        totalMinutes = Math.abs(totalMinutes);
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        return String.format("%s%02d:%02d", sign, hours, minutes);
+    }
+
 
     private String gerarMensagemStatus(LocalDateTime entry, LocalDateTime lunchOut, LocalDateTime lunchIn, LocalDateTime exit) {
         if (entry == null) return "Nenhuma entrada registrada";
@@ -134,4 +149,5 @@ public class AttendanceService {
         if (lunchOut != null && lunchIn == null) return "Saída para almoço registrada, mas não há retorno";
         return "Batidas completas";
     }
+
 }

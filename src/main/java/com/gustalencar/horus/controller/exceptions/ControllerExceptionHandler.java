@@ -1,6 +1,7 @@
 package com.gustalencar.horus.controller.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
+import models.exceptions.AmountOfPointsTheDayReached;
 import models.exceptions.ResourceNotFoundException;
 import models.exceptions.StandardError;
 import models.exceptions.ValidationException;
@@ -67,4 +68,16 @@ public class ControllerExceptionHandler {
         }
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(AmountOfPointsTheDayReached.class)
+    ResponseEntity<StandardError> handleAmountOfPointsTheDayReached(final AmountOfPointsTheDayReached ex, final HttpServletRequest request) {
+        return ResponseEntity.status(CONFLICT).body(StandardError.builder()
+                .timestamp(now())
+                .status(CONFLICT.value())
+                .error(CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
 }
