@@ -8,8 +8,8 @@ import models.responses.UserHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import static javax.security.auth.callback.ConfirmationCallback.OK;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor

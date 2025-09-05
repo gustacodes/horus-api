@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import models.exceptions.StandardError;
 import models.requests.CreateUserHorusRequest;
-import models.responses.FirmHorusResponse;
 import models.responses.UserHorusResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -22,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface UserController {
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Save new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
@@ -37,6 +38,7 @@ public interface UserController {
     ResponseEntity<Void> save(@Valid @RequestBody CreateUserHorusRequest request, @RequestBody(required = false) byte[] fingerprintTemplate);
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
@@ -49,6 +51,7 @@ public interface UserController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<UserHorusResponse> findById(@Parameter(description = "User id", required = true,
-            example = "6") @PathVariable(name = "id") final Long id);
+    ResponseEntity<UserHorusResponse> findById(
+            @Parameter(description = "User id", required = true, example = "1")
+            @PathVariable(name = "id") final Long id);
 }

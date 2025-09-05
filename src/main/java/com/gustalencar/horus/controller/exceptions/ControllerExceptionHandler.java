@@ -12,7 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.*;
@@ -75,6 +77,17 @@ public class ControllerExceptionHandler {
                 .timestamp(now())
                 .status(CONFLICT.value())
                 .error(CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    ResponseEntity<StandardError> handleAmountOfPointsTheDayReached(final NoSuchElementException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(BAD_REQUEST).body(StandardError.builder()
+                .timestamp(now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build());

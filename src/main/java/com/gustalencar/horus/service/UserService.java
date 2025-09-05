@@ -28,7 +28,7 @@ public class UserService {
 
     public User find(final Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                "Firm not found. Id: " + id + ", Type: " + UserHorusResponse.class.getSimpleName()
+                "User not found. Id: " + id + ", Type: " + UserHorusResponse.class.getSimpleName()
         ));
     }
 

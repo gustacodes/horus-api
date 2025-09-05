@@ -38,7 +38,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("fleche-api")
+                    .withIssuer("horus-api")
                     .build()
                     .verify(token)
                     .getSubject();

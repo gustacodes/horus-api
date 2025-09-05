@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -48,12 +49,15 @@ public class User implements Serializable, UserDetails {
     @Column(name = "USR_POSITION")
     private String position;
 
+    @Column(name = "USR_DATEREGISTER")
+    private LocalDateTime dateRegister;
+
     @Column(name = "USR_PROFILE")
     @Enumerated(EnumType.STRING)
     private ProfileBellopaneEnum profile;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.ADMIN;
 
     @ManyToOne
     @JoinColumn(name = "FIRM_ID")
