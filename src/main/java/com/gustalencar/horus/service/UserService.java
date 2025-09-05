@@ -30,11 +30,11 @@ public class UserService {
         ));
     }
 
-    //TODO: VALIDAR SE O USERNAME JÁ EXISTE
     public void save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
         verifyIfCpfAlreadyExists(request.cpf());
-        var firm = firmService.find(request.firmId());
+        verifyUsernameAlreadyExists(request.username());
         User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
+        var firm = firmService.find(request.firmId());
         user.setFirm(firm);
         user.setStatus(request.status());
         user.setFingerprint(fingerprintTemplate);
@@ -48,5 +48,11 @@ public class UserService {
                 });
     }
 
+    private void verifyUsernameAlreadyExists(final String username) {
+        repository.findByUsername(username)
+                .ifPresent(user -> {
+                    throw new DataIntegrityViolationException("Username [ " + username + " ] already exists");
+                });
+    }
 
 }

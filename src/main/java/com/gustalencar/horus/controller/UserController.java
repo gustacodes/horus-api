@@ -22,8 +22,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface UserController {
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Save new user")
+    @PreAuthorize("hasAnyRole('SUPER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -38,7 +38,7 @@ public interface UserController {
     ResponseEntity<Void> save(@Valid @RequestBody CreateUserHorusRequest request, @RequestBody(required = false) byte[] fingerprintTemplate);
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),

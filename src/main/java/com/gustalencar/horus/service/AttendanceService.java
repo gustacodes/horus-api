@@ -106,7 +106,7 @@ public class AttendanceService {
         }
 
         Duration expected;
-        if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.getPosition())) {
+        if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.getProfile())) {
             expected = Duration.ofHours(7).plusMinutes(20);
         } else {
             expected = Duration.ofHours(8);

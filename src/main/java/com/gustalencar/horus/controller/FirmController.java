@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import models.exceptions.StandardError;
 import models.requests.CreateFirmHorusRequest;
-import models.requests.CreateUserHorusRequest;
 import models.responses.FirmHorusResponse;
-import models.responses.UserResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -23,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface FirmController {
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('SUPER')")
     @Operation(summary = "Save new firm")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Firm created"),
@@ -38,6 +38,7 @@ public interface FirmController {
     ResponseEntity<Void> save(@Valid @RequestBody CreateFirmHorusRequest request);
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Firm found"),

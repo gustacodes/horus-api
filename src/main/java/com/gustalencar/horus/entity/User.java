@@ -46,9 +46,6 @@ public class User implements Serializable, UserDetails {
     @Column(name = "USR_PASSWORD")
     private String password;
 
-    @Column(name = "USR_POSITION")
-    private String position;
-
     @Column(name = "USR_DATEREGISTER")
     private LocalDateTime dateRegister;
 
@@ -57,7 +54,7 @@ public class User implements Serializable, UserDetails {
     private ProfileBellopaneEnum profile;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.ADMIN;
+    private UserRole role;
 
     @ManyToOne
     @JoinColumn(name = "FIRM_ID")
@@ -69,7 +66,7 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority(("ROLE_USER")));
+        if (this.role == UserRole.SUPER) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_SUPER"), new SimpleGrantedAuthority(("ROLE_USER")));
         else  return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

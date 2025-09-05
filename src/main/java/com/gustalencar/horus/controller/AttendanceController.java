@@ -12,6 +12,7 @@ import models.exceptions.StandardError;
 import models.requests.CreateAttendanceHorusRequest;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface AttendanceController {
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Save new attendance")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Firm created"),
@@ -37,7 +39,8 @@ public interface AttendanceController {
     })
     ResponseEntity<Void> save(@Valid @RequestBody CreateAttendanceHorusRequest request);
 
-    @GetMapping("/worked-hours/{userId}")
+    @GetMapping("/{userId}/worked-hours")
+    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
