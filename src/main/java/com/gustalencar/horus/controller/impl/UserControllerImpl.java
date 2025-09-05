@@ -18,8 +18,8 @@ public class UserControllerImpl implements UserController {
     private final UserService service;
 
     @Override
-    public ResponseEntity<Void> save(final CreateUserHorusRequest request) {
-        service.save(request);
+    public ResponseEntity<Void> save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
+        service.save(request, fingerprintTemplate);
         return ResponseEntity.status(CREATED.value()).build();
     }
 

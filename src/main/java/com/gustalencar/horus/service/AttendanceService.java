@@ -1,6 +1,7 @@
 package com.gustalencar.horus.service;
 
 import com.gustalencar.horus.entity.Attendance;
+import com.gustalencar.horus.entity.User;
 import com.gustalencar.horus.mapper.AttendanceMapper;
 import com.gustalencar.horus.repository.AttendanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
 import models.exceptions.AmountOfPointsTheDayReached;
 import models.requests.CreateAttendanceHorusRequest;
+import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +73,6 @@ public class AttendanceService {
             return new WorkedHoursHorusResponse("00:00", "00:00", "00:00", "Nenhuma batida encontrada");
         }
 
-        // Ordenar registros por data/hora
         records.sort(Comparator.comparing(Attendance::getDateTime));
 
         LocalDateTime entry = null;
@@ -100,12 +101,10 @@ public class AttendanceService {
             totalWorked = totalWorked.plus(Duration.between(lunchIn, exit));
         }
 
-        // Caso não haja intervalo de almoço
         if (entry != null && exit != null && lunchOut == null && lunchIn == null) {
             totalWorked = Duration.between(entry, exit);
         }
 
-        // Definir jornada esperada
         Duration expected;
         if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.getPosition())) {
             expected = Duration.ofHours(7).plusMinutes(20);
@@ -113,7 +112,6 @@ public class AttendanceService {
             expected = Duration.ofHours(8);
         }
 
-        // Calcular saldo
         Duration saldo = totalWorked.minus(expected);
         Duration extraToShow = saldo.isNegative() ? Duration.ZERO : saldo;
 
@@ -125,14 +123,12 @@ public class AttendanceService {
         );
     }
 
-    // Formata duração para HH:mm
     private String formatDuration(Duration duration) {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
         return String.format("%02d:%02d", hours, minutes);
     }
 
-    // Formata duração com sinal (+/-)
     private String formatDurationWithSign(Duration duration) {
         long totalMinutes = duration.toMinutes();
         String sign = totalMinutes < 0 ? "-" : "+";

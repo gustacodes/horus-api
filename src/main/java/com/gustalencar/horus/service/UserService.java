@@ -10,6 +10,7 @@ import models.requests.CreateUserHorusRequest;
 import models.responses.FirmHorusResponse;
 import models.responses.UserHorusResponse;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ public class UserService {
     private final UserRepository repository;
     private final FirmService firmService;
     private final UserMapper mapper;
+    private final BCryptPasswordEncoder encoder;
 
     public UserHorusResponse findById(Long id) {
         return mapper.fromEntity(find(id));
@@ -30,12 +32,13 @@ public class UserService {
         ));
     }
 
-    public void save(CreateUserHorusRequest request) {
+    public void save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
         verifyIfCpfAlreadyExists(request.cpf());
         var firm = firmService.find(request.firmId());
-        User user = mapper.fromRequest(request);
+        User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
         user.setFirm(firm);
         user.setStatus(request.status());
+        user.setFingerprint(fingerprintTemplate);
         repository.save(user);
     }
 

@@ -34,7 +34,7 @@ public interface UserController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<Void> save(@Valid @RequestBody CreateUserHorusRequest request);
+    ResponseEntity<Void> save(@Valid @RequestBody CreateUserHorusRequest request, @RequestBody(required = false) byte[] fingerprintTemplate);
 
     @GetMapping("/{id}")
     @Operation(summary = "Find by id")

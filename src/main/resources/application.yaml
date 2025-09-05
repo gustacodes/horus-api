@@ -33,3 +33,7 @@ springdoc:
     title: 'HORUS API'
     description: 'System responsible for employee timekeeping'
     version: '1.0.0'
+
+auth:
+  key:
+    secret: "$horus$"
