@@ -1,13 +1,11 @@
 package com.gustalencar.horus.service;
 
-import com.gustalencar.horus.entity.Firm;
 import com.gustalencar.horus.entity.User;
 import com.gustalencar.horus.mapper.UserMapper;
 import com.gustalencar.horus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import models.exceptions.ResourceNotFoundException;
 import models.requests.CreateUserHorusRequest;
-import models.responses.FirmHorusResponse;
 import models.responses.UserHorusResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,6 +30,7 @@ public class UserService {
         ));
     }
 
+    //TODO: VALIDAR SE O USERNAME JÁ EXISTE
     public void save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
         verifyIfCpfAlreadyExists(request.cpf());
         var firm = firmService.find(request.firmId());
@@ -48,7 +47,6 @@ public class UserService {
                     throw new DataIntegrityViolationException("CPF [ " + cpf + " ] already exists");
                 });
     }
-
 
 
 }
