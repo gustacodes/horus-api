@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,11 +37,16 @@ public class AttendanceService {
 
         LocalDate today = LocalDate.now();
         List<Attendance> todayRecords = repository.findByUserAndDate(user.getId(), today);
+
+        if (todayRecords.size() == 4) {
+            throw new AmountOfPointsTheDayReached("Quantidade de batidas do dia atingida");
+        }
+
         AttendanceTypeEnum nextType = determineNextType(todayRecords);
 
         attendance.setFirm(firm);
         attendance.setUser(user);
-        attendance.setDateTime(LocalDateTime.now());
+        attendance.setDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         attendance.setType(nextType);
         attendance.setStatus(AttendanceStatusEnum.VALID);
         repository.save(attendance);
@@ -64,9 +70,6 @@ public class AttendanceService {
 
     public WorkedHoursHorusResponse calculateWorkedHours(Long userId, LocalDate date) {
         List<Attendance> records = repository.findByUserAndDate(userId, date);
-        if (records.size() == 4) {
-            throw new AmountOfPointsTheDayReached("Quantidade de batidas do dia atingida");
-        }
         var user = userService.find(userId);
 
         if (records.isEmpty()) {
