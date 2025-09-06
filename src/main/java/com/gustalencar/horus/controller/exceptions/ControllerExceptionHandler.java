@@ -5,6 +5,7 @@ import models.exceptions.AmountOfPointsTheDayReached;
 import models.exceptions.ResourceNotFoundException;
 import models.exceptions.StandardError;
 import models.exceptions.ValidationException;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

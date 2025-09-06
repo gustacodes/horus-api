@@ -40,6 +40,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<UserHorusResponse> findAllByStatus(String status) {
+        return repository.findAllByStatus(status)
+                .stream()
+                .map(mapper::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public void save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
         verifyIfCpfAlreadyExists(request.cpf());
         verifyUsernameAlreadyExists(request.username());

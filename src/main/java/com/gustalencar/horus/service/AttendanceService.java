@@ -72,7 +72,7 @@ public class AttendanceService {
     }
 
     public List<WorkedHoursHorusResponse> calculateWorkedHours() {
-        List<UserHorusResponse> users = userService.findAll();
+        List<UserHorusResponse> users = userService.findAllByStatus("A");
         List<WorkedHoursHorusResponse> hoursUsers = new ArrayList<>();
         LocalDate today = LocalDate.now();
         LocalDate firstDay = today.withDayOfMonth(1);
@@ -126,8 +126,7 @@ public class AttendanceService {
 
                     String message = gerarMensagemStatus(entry, lunchOut, lunchIn, exit);
                     if (message.equals("Complete records")) {
-                        String balanceType =
-                                saldo.isNegative() ? "NEGATIVE" : saldo.isPositive() ? "POSITIVE" : saldo.isZero() ? "NORMAL" : "ZERO";
+                        String balanceType = saldo.isNegative() ? "NEGATIVE" : saldo.isPositive() ? "POSITIVE" : saldo.isZero() ? "NORMAL" : "ZERO";
                         var totalExtra = CreateHorusEmployeeDailyBalance.builder()
                                 .user(user)
                                 .firm(user.firm())
@@ -156,7 +155,7 @@ public class AttendanceService {
 
     private String formatDurationWithSign(Duration duration) {
         long totalMinutes = duration.toMinutes();
-        String sign = totalMinutes < 0 ? "-" : "+";
+        String sign = totalMinutes < 0 ? "-" : totalMinutes == 0 ? "" : "+";
         totalMinutes = Math.abs(totalMinutes);
         long hours = totalMinutes / 60;
         long minutes = totalMinutes % 60;
