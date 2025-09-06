@@ -8,6 +8,7 @@ import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
 import models.exceptions.AmountOfPointsTheDayReached;
 import models.requests.CreateAttendanceHorusRequest;
+import models.requests.CreateHorusEmployeeDailyBalance;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
@@ -28,6 +31,7 @@ public class AttendanceService {
     private final AttendanceMapper mapper;
     private final UserService userService;
     private final FirmService firmService;
+    private final EmployeeDailyBalanceService dailyBalanceService;
 
     public void registerPoint(CreateAttendanceHorusRequest request) {
         Attendance attendance = mapper.fromRequest(request);
@@ -45,7 +49,7 @@ public class AttendanceService {
 
         attendance.setFirm(firm);
         attendance.setUser(user);
-        attendance.setDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        attendance.setDateTime(now().truncatedTo(ChronoUnit.SECONDS));
         attendance.setType(nextType);
         attendance.setStatus(AttendanceStatusEnum.VALID);
         repository.save(attendance);
@@ -75,10 +79,10 @@ public class AttendanceService {
         LocalDate lastDay = today.withDayOfMonth(today.lengthOfMonth());
 
         for (int i = 0; i < users.size(); i++) {
-            var userFind = userService.find(users.get(i).id());
-            for (LocalDate dia = firstDay; !dia.isAfter(lastDay); dia = dia.plusDays(1)) {
+            var user = userService.findById(users.get(i).id());
+            for (LocalDate day = firstDay; !day.isAfter(lastDay); day = day.plusDays(1)) {
 
-                List<Attendance> records = repository.findByUserAndDate(users.get(i).id(), dia);
+                List<Attendance> records = repository.findByUserAndDate(users.get(i).id(), day);
                 records.sort(Comparator.comparing(Attendance::getDateTime));
 
                 LocalDateTime entry = null;
@@ -111,7 +115,7 @@ public class AttendanceService {
                     }
 
                     Duration expected;
-                    if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(userFind.getProfile().name())) {
+                    if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.profile().name())) {
                         expected = Duration.ofHours(7).plusMinutes(20);
                     } else {
                         expected = Duration.ofHours(8);
@@ -119,13 +123,26 @@ public class AttendanceService {
 
                     Duration saldo = totalWorked.minus(expected);
                     Duration extraToShow = saldo.isNegative() ? Duration.ZERO : saldo;
+
                     String message = gerarMensagemStatus(entry, lunchOut, lunchIn, exit);
-                    var hoursUsersFinal = new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message);
                     if (message.equals("Complete records")) {
-                        hoursUsers.add(hoursUsersFinal);
+                        String balanceType =
+                                saldo.isNegative() ? "NEGATIVE" : saldo.isPositive() ? "POSITIVE" : saldo.isZero() ? "NORMAL" : "ZERO";
+                        var totalExtra = CreateHorusEmployeeDailyBalance.builder()
+                                .user(user)
+                                .firm(user.firm())
+                                .balanceDate(day)
+                                .workedSeconds(totalWorked.getSeconds())
+                                .expectedSeconds(expected.getSeconds())
+                                .balanceSeconds(saldo.getSeconds())
+                                .balanceType(balanceType)
+                                .createdAt(now())
+                                .updatedAt(now())
+                                .build();
+                        dailyBalanceService.save(totalExtra);
+                        hoursUsers.add(new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
                     }
                 }
-
             }
         }
         return hoursUsers;
