@@ -11,6 +11,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,6 +31,13 @@ public class UserService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 "User not found. Id: " + id + ", Type: " + UserHorusResponse.class.getSimpleName()
         ));
+    }
+
+    public List<UserHorusResponse> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(mapper::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public void save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {

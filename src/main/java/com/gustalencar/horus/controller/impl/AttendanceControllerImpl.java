@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +27,8 @@ public class AttendanceControllerImpl implements AttendanceController {
     }
 
     @Override
-    public ResponseEntity<WorkedHoursHorusResponse> findById(Long userId, LocalDate date) {
-        return ResponseEntity.ok(service.calculateWorkedHours(userId, date));
+    public ResponseEntity<List<WorkedHoursHorusResponse>> findById() {
+        return ResponseEntity.ok(service.calculateWorkedHours());
     }
 
 }

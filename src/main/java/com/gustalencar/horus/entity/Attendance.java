@@ -11,11 +11,11 @@ import models.enums.AttendanceTypeEnum;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ATTENDANCE")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "ATTENDANCE")
 public class Attendance {
 
     @Id

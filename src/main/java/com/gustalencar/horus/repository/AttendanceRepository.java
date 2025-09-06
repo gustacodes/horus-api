@@ -11,13 +11,16 @@ import java.util.List;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
-    @Query("""
-                SELECT a FROM Attendance a
-                WHERE a.user.id = :userId
-                AND FUNCTION('DATE', a.dateTime) = :date
-                ORDER BY a.dateTime ASC
-            """)
+    @Query(value = """
+                SELECT
+                ATT.*
+                FROM ATTENDANCE ATT
+                INNER JOIN USERS USR ON USR.USR_ID = ATT.USR_ID
+                WHERE USR.USR_ID = :userId
+                  AND DATE(ATT.ATT_DATETIME) = :date
+                  AND USR.ROLE NOT IN ('SUPER', 'ADMIN')
+                ORDER BY ATT.ATT_DATETIME ASC
+            """, nativeQuery = true)
     List<Attendance> findByUserAndDate(@Param("userId") Long userId, @Param("date") LocalDate date);
-
 
 }

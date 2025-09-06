@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -39,7 +40,7 @@ public interface AttendanceController {
     })
     ResponseEntity<Void> save(@Valid @RequestBody CreateAttendanceHorusRequest request);
 
-    @GetMapping("/{userId}/worked-hours")
+    @GetMapping("/worked-hours")
     @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
@@ -53,8 +54,6 @@ public interface AttendanceController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<WorkedHoursHorusResponse> findById(@Parameter(description = "User id", required = true,
-            example = "7") @PathVariable(name = "userId") final Long userId, @Parameter(description = "Date work", required = true,
-            example = "2025-09-04") @RequestParam final LocalDate date);
+    ResponseEntity<List<WorkedHoursHorusResponse>> findById();
 
 }

@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "USERS")
 @Data
 @With
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "USERS")
 public class User implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
