@@ -54,6 +54,7 @@ public class User implements Serializable, UserDetails {
     private ProfileBellopaneEnum profile;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "USR_ROLE")
     private UserRole role;
 
     @ManyToOne

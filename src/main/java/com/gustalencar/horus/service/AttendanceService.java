@@ -36,7 +36,6 @@ public class AttendanceService {
     public void registerPoint(CreateAttendanceHorusRequest request) {
         Attendance attendance = mapper.fromRequest(request);
         var user = userService.find(request.userId());
-        var firm = firmService.find(request.firmId());
 
         LocalDate today = LocalDate.now();
         List<Attendance> todayRecords = repository.findByUserAndDate(user.getId(), today);
@@ -47,7 +46,7 @@ public class AttendanceService {
 
         AttendanceTypeEnum nextType = determineNextType(todayRecords);
 
-        attendance.setFirm(firm);
+        attendance.setFirm(user.getFirm());
         attendance.setUser(user);
         attendance.setDateTime(now().truncatedTo(ChronoUnit.SECONDS));
         attendance.setType(nextType);

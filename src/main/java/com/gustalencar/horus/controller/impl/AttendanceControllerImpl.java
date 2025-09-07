@@ -27,7 +27,7 @@ public class AttendanceControllerImpl implements AttendanceController {
     }
 
     @Override
-    public ResponseEntity<List<WorkedHoursHorusResponse>> findById() {
+    public ResponseEntity<List<WorkedHoursHorusResponse>> calculateWorkedHours() {
         return ResponseEntity.ok(service.calculateWorkedHours());
     }
 

@@ -54,6 +54,6 @@ public interface AttendanceController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<List<WorkedHoursHorusResponse>> findById();
+    ResponseEntity<List<WorkedHoursHorusResponse>> calculateWorkedHours();
 
 }
