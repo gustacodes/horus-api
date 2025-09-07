@@ -34,7 +34,6 @@ public class AttendanceService {
     private final EmployeeDailyBalanceService dailyBalanceService;
 
     public void registerPoint(CreateAttendanceHorusRequest request) {
-        Attendance attendance = mapper.fromRequest(request);
         var user = userService.find(request.userId());
 
         LocalDate today = LocalDate.now();
@@ -45,6 +44,7 @@ public class AttendanceService {
         }
 
         AttendanceTypeEnum nextType = determineNextType(todayRecords);
+        Attendance attendance = mapper.fromRequest(request);
 
         attendance.setFirm(user.getFirm());
         attendance.setUser(user);

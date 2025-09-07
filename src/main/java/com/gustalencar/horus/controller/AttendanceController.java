@@ -42,10 +42,10 @@ public interface AttendanceController {
 
     @GetMapping("/worked-hours")
     @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
-    @Operation(summary = "Find by id")
+    @Operation(summary = "Records users hours")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User found"),
-            @ApiResponse(responseCode = "404", description = "User not found",
+            @ApiResponse(responseCode = "200", description = "Records users hours found"),
+            @ApiResponse(responseCode = "404", description = "Records users hours not found",
                     content = @Content(
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class))),
