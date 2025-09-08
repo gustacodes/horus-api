@@ -1,10 +1,7 @@
 package com.gustalencar.horus.controller.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
-import models.exceptions.AmountOfPointsTheDayReached;
-import models.exceptions.ResourceNotFoundException;
-import models.exceptions.StandardError;
-import models.exceptions.ValidationException;
+import models.exceptions.*;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.loader.NonUniqueDiscoveredSqlAliasException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -113,6 +110,17 @@ public class ControllerExceptionHandler {
                 .timestamp(now())
                 .status(BAD_REQUEST.value())
                 .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(NotUpdateHoursUserException.class)
+    ResponseEntity<StandardError> handleNotUpdateHoursUserException(final NotUpdateHoursUserException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(CONFLICT).body(StandardError.builder()
+                .timestamp(now())
+                .status(CONFLICT.value())
+                .error(CONFLICT.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build());

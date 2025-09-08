@@ -8,9 +8,12 @@ import lombok.RequiredArgsConstructor;
 import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
 import models.exceptions.AmountOfPointsTheDayReached;
+import models.exceptions.NotUpdateHoursUserException;
+import models.exceptions.ResourceNotFoundException;
 import models.requests.CreateAttendanceHorusRequest;
 import models.requests.CreateHorusEmployeeDailyBalance;
 import models.responses.AttendanceAdjustmentsUserResponse;
+import models.responses.AttendanceHorusResponse;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,6 +39,16 @@ public class AttendanceService {
     private final UserService userService;
     private final FirmService firmService;
     private final EmployeeDailyBalanceService dailyBalanceService;
+
+    public AttendanceHorusResponse findById(final Long attId) {
+        return mapper.fromEntity(find(attId));
+    }
+
+    public Attendance find(Long attId) {
+        return repository.findById(attId).orElseThrow(() -> new ResourceNotFoundException(
+                "User not found. Id: " + attId + ", Type: " + UserHorusResponse.class.getSimpleName()
+        ));
+    }
 
     public void registerPoint(CreateAttendanceHorusRequest request) {
         var user = userService.find(request.userId());
@@ -89,7 +103,6 @@ public class AttendanceService {
                 LocalDateTime lunchOut = null;
                 LocalDateTime lunchIn = null;
                 LocalDateTime exit = null;
-                List<LocalDateTime> extras = new ArrayList<>();
 
                 for (Attendance record : records) {
                     switch (record.getType()) {
@@ -97,7 +110,6 @@ public class AttendanceService {
                         case LUNCH_OUT -> lunchOut = record.getDateTime();
                         case LUNCH_IN -> lunchIn = record.getDateTime();
                         case EXIT -> exit = record.getDateTime();
-                        case EXTRA -> extras.add(record.getDateTime());
                     }
 
                     Duration totalWorked = Duration.ZERO;
@@ -147,28 +159,6 @@ public class AttendanceService {
         return hoursUsers;
     }
 
-    private String formatDuration(Duration duration) {
-        long hours = duration.toHours();
-        long minutes = duration.toMinutes() % 60;
-        return String.format("%02d:%02d", hours, minutes);
-    }
-
-    private String formatDurationWithSign(Duration duration) {
-        long totalMinutes = duration.toMinutes();
-        String sign = totalMinutes < 0 ? "-" : totalMinutes == 0 ? "" : "+";
-        totalMinutes = Math.abs(totalMinutes);
-        long hours = totalMinutes / 60;
-        long minutes = totalMinutes % 60;
-        return String.format("%s%02d:%02d", sign, hours, minutes);
-    }
-
-    private String gerarMensagemStatus(LocalDateTime entry, LocalDateTime lunchOut, LocalDateTime lunchIn, LocalDateTime exit) {
-        if (entry == null) return "No entries recorded";
-        if (exit == null) return "Unregistered exit";
-        if (lunchOut != null && lunchIn == null) return "Lunch departure registered, but no return";
-        return "Complete records";
-    }
-
     public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf, final String data) {
         return repository.adjustmentsHoursUser(cpf, data)
                 .stream()
@@ -191,6 +181,12 @@ public class AttendanceService {
     }
 
     public void updateAdjustmentHourUser(String hour, Long attId, String type) {
+        var attendance = findById(attId);
+        YearMonth attendanceMonth = YearMonth.from(attendance.dateTime());
+        YearMonth currentMonth = YearMonth.now();
+        if (!attendanceMonth.equals(currentMonth)) {
+            throw new NotUpdateHoursUserException("Somente é possível alterar as horas antes do fechamento da folha");
+        }
         repository.updateAdjustmentHourUser(hour, attId, type);
     }
 
@@ -224,5 +220,27 @@ public class AttendanceService {
             case "EXIT" -> statusPoint = "SAÍDA";
         }
         return statusPoint;
+    }
+
+    private String formatDuration(Duration duration) {
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+        return String.format("%02d:%02d", hours, minutes);
+    }
+
+    private String formatDurationWithSign(Duration duration) {
+        long totalMinutes = duration.toMinutes();
+        String sign = totalMinutes < 0 ? "-" : totalMinutes == 0 ? "" : "+";
+        totalMinutes = Math.abs(totalMinutes);
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        return String.format("%s%02d:%02d", sign, hours, minutes);
+    }
+
+    private String gerarMensagemStatus(LocalDateTime entry, LocalDateTime lunchOut, LocalDateTime lunchIn, LocalDateTime exit) {
+        if (entry == null) return "No entries recorded";
+        if (exit == null) return "Unregistered exit";
+        if (lunchOut != null && lunchIn == null) return "Lunch departure registered, but no return";
+        return "Complete records";
     }
 }
