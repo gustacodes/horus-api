@@ -29,11 +29,6 @@ public class AttendanceControllerImpl implements AttendanceController {
     }
 
     @Override
-    public ResponseEntity<List<WorkedHoursHorusResponse>> calculateWorkedHours() {
-        return ResponseEntity.ok(service.calculateWorkedHours());
-    }
-
-    @Override
     public ResponseEntity<List<AttendanceAdjustmentsUserResponse>> adjustmentsUserHoursResponse(final String cpf, final String data) {
         return ResponseEntity.status(OK).body(service.adjustmentsUserResponse(cpf, data));
     }

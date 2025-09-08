@@ -49,9 +49,9 @@ public class User implements Serializable, UserDetails {
     @Column(name = "USR_DATEREGISTER")
     private LocalDateTime dateRegister;
 
-    @Column(name = "USR_PROFILE")
-    @Enumerated(EnumType.STRING)
-    private ProfileBellopaneEnum profile;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USR_PROFILE", referencedColumnName = "ROLE_ID")
+    private FirmRole profile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "USR_ROLE")

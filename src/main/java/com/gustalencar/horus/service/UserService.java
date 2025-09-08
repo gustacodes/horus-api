@@ -22,6 +22,7 @@ public class UserService {
     private final FirmService firmService;
     private final UserMapper mapper;
     private final BCryptPasswordEncoder encoder;
+    private final FirmRoleService firmRoleService;
 
     public UserHorusResponse findById(Long id) {
         return mapper.fromEntity(find(id));
@@ -52,6 +53,8 @@ public class UserService {
         verifyUsernameAlreadyExists(request.username());
         User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
         var firm = firmService.find(request.firmId());
+        var role = firmRoleService.find(request.profile().roleId());
+        user.setProfile(role);
         user.setFirm(firm);
         user.setStatus(request.status());
         user.setFingerprint(fingerprintTemplate);

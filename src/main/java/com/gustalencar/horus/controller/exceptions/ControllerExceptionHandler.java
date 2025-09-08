@@ -2,6 +2,7 @@ package com.gustalencar.horus.controller.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import models.exceptions.*;
+import org.hibernate.TransientObjectException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.loader.NonUniqueDiscoveredSqlAliasException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -117,6 +118,17 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(NotUpdateHoursUserException.class)
     ResponseEntity<StandardError> handleNotUpdateHoursUserException(final NotUpdateHoursUserException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(CONFLICT).body(StandardError.builder()
+                .timestamp(now())
+                .status(CONFLICT.value())
+                .error(CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(TransientObjectException.class)
+    ResponseEntity<StandardError> handleTransientObjectException(final TransientObjectException ex, final HttpServletRequest request) {
         return ResponseEntity.status(CONFLICT).body(StandardError.builder()
                 .timestamp(now())
                 .status(CONFLICT.value())
