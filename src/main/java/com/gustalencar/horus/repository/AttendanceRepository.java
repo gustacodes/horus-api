@@ -38,7 +38,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             "USR.USR_PROFILE\n" +
             "FROM ATTENDANCE ATT\n" +
             "INNER JOIN USERS USR ON USR.USR_ID = ATT.USR_ID\n" +
-            "WHERE USR.USR_CPF = ?", nativeQuery = true)
-    List<Attendance> adjustmentsHoursUser(final String cpf);
+            "WHERE USR.USR_CPF = ? AND DATE_TRUNC('day', ATT.ATT_DATETIME) = TO_DATE(?, 'DD/MM/YYYY')", nativeQuery = true)
+    List<Attendance> adjustmentsHoursUser(final String cpf, final String data);
 
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -33,8 +34,8 @@ public class AttendanceControllerImpl implements AttendanceController {
     }
 
     @Override
-    public ResponseEntity<List<AttendanceAdjustmentsUserResponse>> adjustmentsUserHoursResponse(final String cpf) {
-        return ResponseEntity.status(OK).body(service.adjustmentsUserResponse(cpf));
+    public ResponseEntity<List<AttendanceAdjustmentsUserResponse>> adjustmentsUserHoursResponse(final String cpf, final String data) {
+        return ResponseEntity.status(OK).body(service.adjustmentsUserResponse(cpf, data));
     }
 
 }

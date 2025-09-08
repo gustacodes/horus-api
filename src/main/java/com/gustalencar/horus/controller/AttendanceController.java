@@ -71,6 +71,6 @@ public interface AttendanceController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<List<AttendanceAdjustmentsUserResponse>>adjustmentsUserHoursResponse(@PathVariable(name = "cpf") final String cpf);
+    ResponseEntity<List<AttendanceAdjustmentsUserResponse>>adjustmentsUserHoursResponse(@PathVariable final String cpf, @RequestParam String data);
 
 }

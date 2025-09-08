@@ -3,6 +3,7 @@ package com.gustalencar.horus.service;
 import com.gustalencar.horus.entity.Attendance;
 import com.gustalencar.horus.mapper.AttendanceMapper;
 import com.gustalencar.horus.repository.AttendanceRepository;
+import com.gustalencar.horus.util.Util;
 import lombok.RequiredArgsConstructor;
 import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
@@ -168,17 +169,18 @@ public class AttendanceService {
         return "Complete records";
     }
 
-    public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf) {
-        return repository.adjustmentsHoursUser(cpf)
+    public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf, final String data) {
+        return repository.adjustmentsHoursUser(cpf, data)
                 .stream()
                 .map(attendance -> {
                     var user = userService.find(attendance.getUser().getId());
                     return AttendanceAdjustmentsUserResponse.builder()
                             .name(user.getName())
-                            .attDateTime(attendance.getDateTime())
+                            .data(Util.formatDate(attendance.getDateTime()))
+                            .hora(Util.formatHour(attendance.getDateTime()))
                             .attId(attendance.getId())
                             .attObservation(attendance.getObservation())
-                            .attType(attendance.getType().name())
+                            .attType(pointStatusUsers(attendance.getType().name()))
                             .attStatus(validationStatus(attendance.getStatus().name()))
                             .usrProfile(functionUserInFirm(user.getProfile().name()))
                             .usrId(user.getId())
@@ -205,9 +207,18 @@ public class AttendanceService {
         switch (status) {
             case "VALID" -> statusPoint = "VALIDO";
             case "INVALID" -> statusPoint = "INVALIDA";
-            case "PENDING"-> statusPoint = "PENDENTE";
+            case "PENDING" -> statusPoint = "PENDENTE";
         }
         return statusPoint;
     }
 
+    private String pointStatusUsers(String statusPoint) {
+        switch (statusPoint) {
+            case "ENTRY" -> statusPoint = "ENTRADA";
+            case "LUNCH_OUT" -> statusPoint = "INTERVALO";
+            case "LUNCH_IN" -> statusPoint = "VOLTA";
+            case "EXIT" -> statusPoint = "SAÍDA";
+        }
+        return statusPoint;
+    }
 }
