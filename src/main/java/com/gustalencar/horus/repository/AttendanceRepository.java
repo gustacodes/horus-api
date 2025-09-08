@@ -3,9 +3,11 @@ package com.gustalencar.horus.repository;
 import com.gustalencar.horus.entity.Attendance;
 import models.responses.AttendanceAdjustmentsUserResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,5 +42,10 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             "INNER JOIN USERS USR ON USR.USR_ID = ATT.USR_ID\n" +
             "WHERE USR.USR_CPF = ? AND DATE_TRUNC('day', ATT.ATT_DATETIME) = TO_DATE(?, 'DD/MM/YYYY')", nativeQuery = true)
     List<Attendance> adjustmentsHoursUser(final String cpf, final String data);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE ATTENDANCE SET ATT_DATETIME = TO_TIMESTAMP(TO_CHAR(ATT_DATETIME, 'YYYY-MM-DD') || ' ' || ?, 'YYYY-MM-DD HH24:MI') WHERE ATT_ID = ? AND ATT_TYPE = ?", nativeQuery = true)
+    void updateAdjustmentHourUser(String hour, Long attId, String type);
 
 }

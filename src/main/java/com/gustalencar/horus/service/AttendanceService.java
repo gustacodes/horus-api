@@ -190,6 +190,10 @@ public class AttendanceService {
                 .collect(Collectors.toList());
     }
 
+    public void updateAdjustmentHourUser(String hour, Long attId, String type) {
+        repository.updateAdjustmentHourUser(hour, attId, type);
+    }
+
     private String functionUserInFirm(String function) {
         String profile = null;
         switch (function) {

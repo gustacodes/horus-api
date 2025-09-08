@@ -38,4 +38,10 @@ public class AttendanceControllerImpl implements AttendanceController {
         return ResponseEntity.status(OK).body(service.adjustmentsUserResponse(cpf, data));
     }
 
+    @Override
+    public ResponseEntity<Void> updateAdjustmentHourUser(String hour, Long attId, String type) {
+        service.updateAdjustmentHourUser(hour, attId, type);
+        return ResponseEntity.ok().build();
+    }
+
 }

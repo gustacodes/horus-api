@@ -73,4 +73,20 @@ public interface AttendanceController {
     })
     ResponseEntity<List<AttendanceAdjustmentsUserResponse>>adjustmentsUserHoursResponse(@PathVariable final String cpf, @RequestParam String data);
 
+    @PutMapping("/{attId}/{type}/update-hours")
+    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
+    @Operation(summary = "Update hours for user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update users hours ok"),
+            @ApiResponse(responseCode = "404", description = "Update hours not success",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class)))
+    })
+    ResponseEntity<Void>updateAdjustmentHourUser(@RequestParam final String hour, @PathVariable final Long attId, @PathVariable final String type);
+
 }
