@@ -6,7 +6,9 @@ import models.exceptions.ResourceNotFoundException;
 import models.exceptions.StandardError;
 import models.exceptions.ValidationException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.hibernate.loader.NonUniqueDiscoveredSqlAliasException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -85,6 +87,28 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     ResponseEntity<StandardError> handleAmountOfPointsTheDayReached(final NoSuchElementException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(BAD_REQUEST).body(StandardError.builder()
+                .timestamp(now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(NonUniqueDiscoveredSqlAliasException.class)
+    ResponseEntity<StandardError> handleNonUniqueDiscoveredSqlAliasException(final NonUniqueDiscoveredSqlAliasException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(BAD_REQUEST).body(StandardError.builder()
+                .timestamp(now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
+    ResponseEntity<StandardError> handleInvalidDataAccessResourceUsageException(final InvalidDataAccessResourceUsageException ex, final HttpServletRequest request) {
         return ResponseEntity.status(BAD_REQUEST).body(StandardError.builder()
                 .timestamp(now())
                 .status(BAD_REQUEST.value())

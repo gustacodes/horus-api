@@ -27,10 +27,6 @@ public class Attendance {
     @JoinColumn(name = "USR_ID", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FIRM_ID", nullable = false)
-    private Firm firm;
-
     @Column(name = "ATT_DATETIME", nullable = false)
     private LocalDateTime dateTime;
 

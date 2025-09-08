@@ -4,6 +4,7 @@ import com.gustalencar.horus.controller.AttendanceController;
 import com.gustalencar.horus.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateAttendanceHorusRequest;
+import models.responses.AttendanceAdjustmentsUserResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,11 @@ public class AttendanceControllerImpl implements AttendanceController {
     @Override
     public ResponseEntity<List<WorkedHoursHorusResponse>> calculateWorkedHours() {
         return ResponseEntity.ok(service.calculateWorkedHours());
+    }
+
+    @Override
+    public ResponseEntity<List<AttendanceAdjustmentsUserResponse>> adjustmentsUserHoursResponse(final String cpf) {
+        return ResponseEntity.status(OK).body(service.adjustmentsUserResponse(cpf));
     }
 
 }

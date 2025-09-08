@@ -9,6 +9,7 @@ import models.enums.AttendanceTypeEnum;
 import models.exceptions.AmountOfPointsTheDayReached;
 import models.requests.CreateAttendanceHorusRequest;
 import models.requests.CreateHorusEmployeeDailyBalance;
+import models.responses.AttendanceAdjustmentsUserResponse;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 
@@ -45,8 +47,6 @@ public class AttendanceService {
 
         AttendanceTypeEnum nextType = determineNextType(todayRecords);
         Attendance attendance = mapper.fromRequest(request);
-
-        attendance.setFirm(user.getFirm());
         attendance.setUser(user);
         attendance.setDateTime(now().truncatedTo(ChronoUnit.SECONDS));
         attendance.setType(nextType);
@@ -166,6 +166,48 @@ public class AttendanceService {
         if (exit == null) return "Unregistered exit";
         if (lunchOut != null && lunchIn == null) return "Lunch departure registered, but no return";
         return "Complete records";
+    }
+
+    public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf) {
+        return repository.adjustmentsHoursUser(cpf)
+                .stream()
+                .map(attendance -> {
+                    var user = userService.find(attendance.getUser().getId());
+                    return AttendanceAdjustmentsUserResponse.builder()
+                            .name(user.getName())
+                            .attDateTime(attendance.getDateTime())
+                            .attId(attendance.getId())
+                            .attObservation(attendance.getObservation())
+                            .attType(attendance.getType().name())
+                            .attStatus(validationStatus(attendance.getStatus().name()))
+                            .usrProfile(functionUserInFirm(user.getProfile().name()))
+                            .usrId(user.getId())
+                            .firmId(user.getFirm().getId())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String functionUserInFirm(String function) {
+        String profile = null;
+        switch (function) {
+            case "ROLE_GENERAL_SERVICES" -> profile = "SERVIÇOS GERAIS";
+            case "ROLE_MANAGER" -> profile = "GERENTE";
+            case "ROLE_CASHIER" -> profile = "CAIXA";
+            case "ROLE_BAKER" -> profile = "PADEIRO";
+            case "ROLE_ATTENDANT" -> profile = "ATENDENTE";
+        }
+        return profile;
+    }
+
+    private String validationStatus(String status) {
+        String statusPoint = null;
+        switch (status) {
+            case "VALID" -> statusPoint = "VALIDO";
+            case "INVALID" -> statusPoint = "INVALIDA";
+            case "PENDING"-> statusPoint = "PENDENTE";
+        }
+        return statusPoint;
     }
 
 }

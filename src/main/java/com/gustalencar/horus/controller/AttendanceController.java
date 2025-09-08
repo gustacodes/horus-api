@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import models.exceptions.StandardError;
 import models.requests.CreateAttendanceHorusRequest;
+import models.responses.AttendanceAdjustmentsUserResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,5 +56,21 @@ public interface AttendanceController {
                             schema = @Schema(implementation = StandardError.class)))
     })
     ResponseEntity<List<WorkedHoursHorusResponse>> calculateWorkedHours();
+
+    @GetMapping("/{cpf}/worked-hours-user")
+    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
+    @Operation(summary = "Records users hours for update")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Records users hours found"),
+            @ApiResponse(responseCode = "404", description = "Records users hours not found",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = StandardError.class)))
+    })
+    ResponseEntity<List<AttendanceAdjustmentsUserResponse>>adjustmentsUserHoursResponse(@PathVariable(name = "cpf") final String cpf);
 
 }
