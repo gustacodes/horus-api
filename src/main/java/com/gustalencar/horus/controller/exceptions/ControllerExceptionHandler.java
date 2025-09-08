@@ -8,6 +8,7 @@ import org.hibernate.loader.NonUniqueDiscoveredSqlAliasException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -129,6 +130,17 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(TransientObjectException.class)
     ResponseEntity<StandardError> handleTransientObjectException(final TransientObjectException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(CONFLICT).body(StandardError.builder()
+                .timestamp(now())
+                .status(CONFLICT.value())
+                .error(CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<StandardError> handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex, final HttpServletRequest request) {
         return ResponseEntity.status(CONFLICT).body(StandardError.builder()
                 .timestamp(now())
                 .status(CONFLICT.value())

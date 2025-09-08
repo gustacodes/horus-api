@@ -3,7 +3,7 @@ package com.gustalencar.horus.service;
 import com.gustalencar.horus.entity.Attendance;
 import com.gustalencar.horus.mapper.AttendanceMapper;
 import com.gustalencar.horus.repository.AttendanceRepository;
-import com.gustalencar.horus.util.Util;
+import com.gustalencar.horus.infra.util.Util;
 import lombok.RequiredArgsConstructor;
 import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;

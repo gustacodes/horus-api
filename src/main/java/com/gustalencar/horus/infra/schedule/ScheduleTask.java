@@ -1,4 +1,4 @@
-package com.gustalencar.horus.schedule;
+package com.gustalencar.horus.infra.schedule;
 
 import com.gustalencar.horus.entity.Attendance;
 import com.gustalencar.horus.repository.AttendanceRepository;

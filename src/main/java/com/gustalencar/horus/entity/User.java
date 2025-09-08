@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import models.enums.ProfileBellopaneEnum;
 import models.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,7 +14,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -67,8 +65,9 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == UserRole.SUPER) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_SUPER"), new SimpleGrantedAuthority(("ROLE_USER")));
-        else  return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.role == UserRole.SUPER)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_SUPER"), new SimpleGrantedAuthority(("ROLE_USER")));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

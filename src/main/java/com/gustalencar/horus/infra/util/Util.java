@@ -1,4 +1,4 @@
-package com.gustalencar.horus.util;
+package com.gustalencar.horus.infra.util;
 
 import org.springframework.stereotype.Component;
 
