@@ -2,12 +2,12 @@ package com.gustalencar.horus.infra.schedule;
 
 import com.gustalencar.horus.entity.Attendance;
 import com.gustalencar.horus.repository.AttendanceRepository;
+import com.gustalencar.horus.service.CompanyOccupationService;
 import com.gustalencar.horus.service.EmployeeDailyBalanceService;
-import com.gustalencar.horus.service.FirmRoleService;
 import com.gustalencar.horus.service.UserService;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateHorusEmployeeDailyBalance;
-import models.responses.FirmRoleHorusResponse;
+import models.responses.CompanyOccupationHorusResponse;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,9 +30,9 @@ public class ScheduleTask {
     private final UserService userService;
     private final AttendanceRepository attendanceRepository;
     private final EmployeeDailyBalanceService dailyBalanceService;
-    private final FirmRoleService firmRoleService;
+    private final CompanyOccupationService companyOccupationService;
 
-//    @Scheduled(cron = "0 59 23 L * ?")
+    //    @Scheduled(cron = "0 59 23 L * ?")
     @Scheduled(cron = "0 29 15 8 9 ?")
     public void calculateWorkedHours() {
         LocalDate today = LocalDate.now();
@@ -74,8 +74,8 @@ public class ScheduleTask {
                         totalWorked = Duration.between(entry, exit);
                     }
 
-                    List<FirmRoleHorusResponse> profission = firmRoleService.findAllByFirmId(user.firm().id());
-                    String [] workload = profission.get(i).workload().split(":");
+                    List<CompanyOccupationHorusResponse> profission = companyOccupationService.findAllByFirmId(user.firm().id());
+                    String[] workload = profission.get(i).workload().split(":");
                     Duration expected = Duration.ofHours(Long.parseLong(workload[0])).plusMinutes(Long.parseLong(workload[1]));
 
                     Duration saldo = totalWorked.minus(expected);

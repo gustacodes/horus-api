@@ -10,34 +10,34 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "FIRM_ROLES")
-public class FirmRole {
+@Table(name = "COMPANY_OCCUPATION")
+public class CompanyOccupation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ROLE_ID")
+    @Column(name = "CO_ID")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CMP_ID", nullable = false)
     private Company company;
 
-    @Column(name = "ROLE_NAME", nullable = false, length = 100)
+    @Column(name = "CO_NAME", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "ROLE_DESC", length = 255)
+    @Column(name = "CO_DESCRIPTION", length = 255)
     private String description;
 
-    @Column(name = "WORKLOAD")
+    @Column(name = "CO_WORKLOAD")
     private String workload;
 
-    @Column(name = "IS_ACTIVE")
+    @Column(name = "CO_ACTIVE")
     private Boolean active;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    @Column(name = "CO_CREATEDAT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
+    @Column(name = "CO_UPDATEAT")
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -22,7 +22,7 @@ public class UserService {
     private final CompanyService companyService;
     private final UserMapper mapper;
     private final BCryptPasswordEncoder encoder;
-    private final FirmRoleService firmRoleService;
+    private final CompanyOccupationService companyOccupationService;
 
     public UserHorusResponse findById(Long id) {
         return mapper.fromEntity(find(id));
@@ -53,7 +53,7 @@ public class UserService {
         verifyUsernameAlreadyExists(request.username());
         User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
         var firm = companyService.find(request.firmId());
-        var role = firmRoleService.find(request.profile().roleId());
+        var role = companyOccupationService.find(request.profile().roleId());
         user.setProfile(role);
         user.setCompany(firm);
         user.setStatus(request.status());
