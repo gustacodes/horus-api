@@ -48,8 +48,8 @@ public class User implements Serializable, UserDetails {
     private LocalDateTime dateRegister;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USR_PROFILE", referencedColumnName = "CMP_ID")
-    private CompanyOccupation profile;
+    @JoinColumn(name = "CO_ID")
+    private CompanyOccupation companyOccupationId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "USR_ROLE")

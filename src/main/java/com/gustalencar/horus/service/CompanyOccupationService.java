@@ -21,7 +21,7 @@ public class CompanyOccupationService {
     private final CompanyService companyService;
 
     public void save(CreateCompanyOccupationRequest firmRoleRequest) {
-        var firm = companyService.find(firmRoleRequest.firmId());
+        var firm = companyService.find(firmRoleRequest.coId());
         CompanyOccupation companyOccupation = mapper.fromRequest(firmRoleRequest);
         companyOccupation.setCompany(firm);
         repository.save(companyOccupation);
@@ -37,7 +37,7 @@ public class CompanyOccupationService {
         ));
     }
 
-    public List<CompanyOccupationHorusResponse> findAllByFirmId(final Long id) {
+    public List<CompanyOccupationHorusResponse> findAllByCompanyId(final Long id) {
         return repository.findAllByCompany_Id(id)
                 .stream()
                 .map(mapper::fromEntity)

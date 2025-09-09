@@ -1,6 +1,7 @@
 package com.gustalencar.horus.service;
 
 import com.gustalencar.horus.entity.User;
+import com.gustalencar.horus.infra.util.Util;
 import com.gustalencar.horus.mapper.UserMapper;
 import com.gustalencar.horus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +53,11 @@ public class UserService {
         verifyIfCpfAlreadyExists(request.cpf());
         verifyUsernameAlreadyExists(request.username());
         User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
-        var firm = companyService.find(request.firmId());
-        var role = companyOccupationService.find(request.profile().roleId());
-        user.setProfile(role);
-        user.setCompany(firm);
+        var company = companyService.find(request.companyOccupationId().cmpId());
+        var role = companyOccupationService.find(request.companyOccupationId().coId());
+        user.setName(Util.removeAccents(Util.removeAccents(request.name())).toUpperCase());
+        user.setCompanyOccupationId(role);
+        user.setCompany(company);
         user.setStatus(request.status());
         user.setFingerprint(fingerprintTemplate);
         repository.save(user);

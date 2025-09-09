@@ -91,7 +91,7 @@ public class AttendanceService {
                             .attObservation(attendance.getObservation())
                             .attType(pointStatusUsers(attendance.getType().name()))
                             .attStatus(validationStatus(attendance.getStatus().name()))
-                            .usrProfile(functionUserInFirm(user.getProfile().getName()))
+                            .usrProfile(functionUserInFirm(user.getCompanyOccupationId().getName()))
                             .usrId(user.getId())
                             .firmId(user.getCompany().getId())
                             .build();

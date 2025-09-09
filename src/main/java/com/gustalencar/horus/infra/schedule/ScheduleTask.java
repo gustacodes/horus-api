@@ -74,8 +74,8 @@ public class ScheduleTask {
                         totalWorked = Duration.between(entry, exit);
                     }
 
-                    List<CompanyOccupationHorusResponse> profission = companyOccupationService.findAllByFirmId(user.firm().id());
-                    String[] workload = profission.get(i).workload().split(":");
+                    List<CompanyOccupationHorusResponse> occupation = companyOccupationService.findAllByCompanyId(user.firm().id());
+                    String[] workload = occupation.get(i).workload().split(":");
                     Duration expected = Duration.ofHours(Long.parseLong(workload[0])).plusMinutes(Long.parseLong(workload[1]));
 
                     Duration saldo = totalWorked.minus(expected);

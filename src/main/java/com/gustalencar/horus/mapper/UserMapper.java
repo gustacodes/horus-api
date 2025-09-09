@@ -14,6 +14,6 @@ public interface UserMapper {
     UserHorusResponse fromEntity(final User entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "profile", source = "profile")
+    @Mapping(target = "companyOccupationId", source = "companyOccupationId")
     User fromRequest(CreateUserHorusRequest createUserHorusRequest);
 }
