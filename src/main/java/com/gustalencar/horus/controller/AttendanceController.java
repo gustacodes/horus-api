@@ -26,7 +26,7 @@ public interface AttendanceController {
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Save new attendance")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Firm created"),
+            @ApiResponse(responseCode = "201", description = "Attendance register"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(
                             mediaType = APPLICATION_JSON_VALUE,

@@ -3,9 +3,11 @@ package com.gustalencar.horus.infra.schedule;
 import com.gustalencar.horus.entity.Attendance;
 import com.gustalencar.horus.repository.AttendanceRepository;
 import com.gustalencar.horus.service.EmployeeDailyBalanceService;
+import com.gustalencar.horus.service.FirmRoleService;
 import com.gustalencar.horus.service.UserService;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateHorusEmployeeDailyBalance;
+import models.responses.FirmRoleHorusResponse;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,20 +30,20 @@ public class ScheduleTask {
     private final UserService userService;
     private final AttendanceRepository attendanceRepository;
     private final EmployeeDailyBalanceService dailyBalanceService;
+    private final FirmRoleService firmRoleService;
 
 //    @Scheduled(cron = "0 59 23 L * ?")
     @Scheduled(cron = "0 29 15 8 9 ?")
     public void calculateWorkedHours() {
-        List<UserHorusResponse> users = userService.findAllByStatus("A");
-        List<WorkedHoursHorusResponse> hoursUsers = new ArrayList<>();
         LocalDate today = LocalDate.now();
         LocalDate firstDay = today.withDayOfMonth(1);
         LocalDate lastDay = today.withDayOfMonth(today.lengthOfMonth());
+        List<WorkedHoursHorusResponse> hoursUsers = new ArrayList<>();
+        List<UserHorusResponse> users = userService.findAllByStatus("A");
 
         for (int i = 0; i < users.size(); i++) {
             var user = userService.findById(users.get(i).id());
             for (LocalDate day = firstDay; !day.isAfter(lastDay); day = day.plusDays(1)) {
-
                 List<Attendance> records = attendanceRepository.findByUserAndDate(users.get(i).id(), day);
                 records.sort(Comparator.comparing(Attendance::getDateTime));
 
@@ -72,12 +74,9 @@ public class ScheduleTask {
                         totalWorked = Duration.between(entry, exit);
                     }
 
-                    Duration expected;
-                    if (List.of("ROLE_ATTENDANT", "ROLE_CASHIER", "ROLE_GENERAL_SERVICES").contains(user.profile().name())) {
-                        expected = Duration.ofHours(7).plusMinutes(20);
-                    } else {
-                        expected = Duration.ofHours(8);
-                    }
+                    List<FirmRoleHorusResponse> profission = firmRoleService.findAllByFirmId(user.firm().id());
+                    String [] workload = profission.get(i).workload().split(":");
+                    Duration expected = Duration.ofHours(Long.parseLong(workload[0])).plusMinutes(Long.parseLong(workload[1]));
 
                     Duration saldo = totalWorked.minus(expected);
                     Duration extraToShow = saldo.isNegative() ? Duration.ZERO : saldo;

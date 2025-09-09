@@ -9,23 +9,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import models.exceptions.StandardError;
-import models.requests.CreateFirmHorusRequest;
-import models.responses.FirmHorusResponse;
+import models.requests.CreateCompanyHorusRequest;
+import models.responses.CompanyHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Tag(name = "FirmController", description = "Controller responsible for firm operations")
-@RequestMapping("/api/firm")
-public interface FirmController {
+@Tag(name = "CompanyController", description = "Controller responsible for company operations")
+@RequestMapping("/api/company")
+public interface CompanyController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('SUPER')")
-    @Operation(summary = "Save new firm")
+    @Operation(summary = "Save new Company")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Firm created"),
+            @ApiResponse(responseCode = "201", description = "Company created"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(
                             mediaType = APPLICATION_JSON_VALUE,
@@ -35,14 +35,14 @@ public interface FirmController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<Void> save(@Valid @RequestBody CreateFirmHorusRequest request);
+    ResponseEntity<Void> save(@Valid @RequestBody CreateCompanyHorusRequest request);
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
     @Operation(summary = "Find by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Firm found"),
-            @ApiResponse(responseCode = "404", description = "Firm not found",
+            @ApiResponse(responseCode = "200", description = "Company found"),
+            @ApiResponse(responseCode = "404", description = "Company not found",
                     content = @Content(
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class))),
@@ -51,6 +51,6 @@ public interface FirmController {
                             mediaType = APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = StandardError.class)))
     })
-    ResponseEntity<FirmHorusResponse> findById(@Parameter(description = "Firm id", required = true,
+    ResponseEntity<CompanyHorusResponse> findById(@Parameter(description = "Company id", required = true,
             example = "1") @PathVariable(name = "id") final Long id);
 }

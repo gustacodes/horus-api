@@ -26,8 +26,8 @@ public class EmployeeDailyBalance {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FIRM_ID", nullable = false)
-    private Firm firm;
+    @JoinColumn(name = "CMP_ID", nullable = false)
+    private Company company;
 
     @Column(name = "BALANCE_DATE", nullable = false)
     private LocalDate balanceDate;

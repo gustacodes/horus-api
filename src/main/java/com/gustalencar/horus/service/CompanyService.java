@@ -1,34 +1,34 @@
 package com.gustalencar.horus.service;
 
-import com.gustalencar.horus.entity.Firm;
-import com.gustalencar.horus.mapper.FirmMapper;
-import com.gustalencar.horus.repository.FirmRepository;
+import com.gustalencar.horus.entity.Company;
+import com.gustalencar.horus.mapper.CompanyMapper;
+import com.gustalencar.horus.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import models.exceptions.ResourceNotFoundException;
-import models.requests.CreateFirmHorusRequest;
-import models.responses.FirmHorusResponse;
+import models.requests.CreateCompanyHorusRequest;
+import models.responses.CompanyHorusResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FirmService {
+public class CompanyService {
 
-    private final FirmRepository repository;
-    private final FirmMapper mapper;
+    private final CompanyRepository repository;
+    private final CompanyMapper mapper;
 
-    public FirmHorusResponse findById(Long id) {
+    public CompanyHorusResponse findById(Long id) {
         return mapper.fromEntity(find(id));
     }
 
-    public void save(CreateFirmHorusRequest createFirmHorusRequest) {
+    public void save(CreateCompanyHorusRequest createFirmHorusRequest) {
         verifyIfCnpjAlreadyExists(createFirmHorusRequest.cnpj(), null);
         repository.save(mapper.fromRequest(createFirmHorusRequest));
     }
 
-    public Firm find(final Long id) {
+    public Company find(final Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                "Firm not found. Id: " + id + ", Type: " + FirmHorusResponse.class.getSimpleName()
+                "Company not found. Id: " + id + ", Type: " + CompanyHorusResponse.class.getSimpleName()
         ));
     }
 

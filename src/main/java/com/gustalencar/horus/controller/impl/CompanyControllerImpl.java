@@ -1,11 +1,10 @@
 package com.gustalencar.horus.controller.impl;
 
-import com.gustalencar.horus.controller.FirmController;
-import com.gustalencar.horus.service.FirmService;
+import com.gustalencar.horus.controller.CompanyController;
+import com.gustalencar.horus.service.CompanyService;
 import lombok.RequiredArgsConstructor;
-import models.requests.CreateFirmHorusRequest;
-import models.responses.FirmHorusResponse;
-import models.responses.UserResponse;
+import models.requests.CreateCompanyHorusRequest;
+import models.responses.CompanyHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,18 +13,18 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-public class FirmControllerImpl implements FirmController {
+public class CompanyControllerImpl implements CompanyController {
 
-    private final FirmService service;
+    private final CompanyService service;
 
     @Override
-    public ResponseEntity<Void> save(CreateFirmHorusRequest request) {
+    public ResponseEntity<Void> save(CreateCompanyHorusRequest request) {
         service.save(request);
         return ResponseEntity.status(CREATED.value()).build();
     }
 
     @Override
-    public ResponseEntity<FirmHorusResponse> findById(final Long id) {
+    public ResponseEntity<CompanyHorusResponse> findById(final Long id) {
         return ResponseEntity.status(OK).body(service.findById(id));
     }
 }

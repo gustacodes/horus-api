@@ -19,8 +19,8 @@ public class FirmRole {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FIRM_ID", nullable = false)
-    private Firm firm;
+    @JoinColumn(name = "CMP_ID", nullable = false)
+    private Company company;
 
     @Column(name = "ROLE_NAME", nullable = false, length = 100)
     private String name;

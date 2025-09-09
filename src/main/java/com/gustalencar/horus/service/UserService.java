@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository repository;
-    private final FirmService firmService;
+    private final CompanyService companyService;
     private final UserMapper mapper;
     private final BCryptPasswordEncoder encoder;
     private final FirmRoleService firmRoleService;
@@ -52,10 +52,10 @@ public class UserService {
         verifyIfCpfAlreadyExists(request.cpf());
         verifyUsernameAlreadyExists(request.username());
         User user = mapper.fromRequest(request).withPassword(encoder.encode(request.password()));
-        var firm = firmService.find(request.firmId());
+        var firm = companyService.find(request.firmId());
         var role = firmRoleService.find(request.profile().roleId());
         user.setProfile(role);
-        user.setFirm(firm);
+        user.setCompany(firm);
         user.setStatus(request.status());
         user.setFingerprint(fingerprintTemplate);
         repository.save(user);

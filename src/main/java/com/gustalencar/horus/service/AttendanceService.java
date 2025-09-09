@@ -93,7 +93,7 @@ public class AttendanceService {
                             .attStatus(validationStatus(attendance.getStatus().name()))
                             .usrProfile(functionUserInFirm(user.getProfile().getName()))
                             .usrId(user.getId())
-                            .firmId(user.getFirm().getId())
+                            .firmId(user.getCompany().getId())
                             .build();
                 })
                 .collect(Collectors.toList());

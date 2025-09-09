@@ -12,36 +12,36 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "FIRM")
-public class Firm {
+@Table(name = "COMPANY")
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "FIRM_ID")
+    @Column(name = "CMP_ID")
     private Long id;
 
-    @Column(name = "FIRM_NAME")
+    @Column(name = "CMP_NAME")
     private String firmName;
 
-    @Column(name = "FIRM_CNPJ")
+    @Column(name = "CMP_CNPJ")
     private String cnpj;
 
-    @Column(name = "FIRM_EMAIL")
+    @Column(name = "CMP_EMAIL")
     private String email;
 
-    @Column(name = "FIRM_PHONE")
+    @Column(name = "CMP_PHONE")
     private String phone;
 
-    @Column(name = "FIRM_STATUS")
+    @Column(name = "CMP_STATUS")
     private String status;
 
-    @Column(name = "FIRM_ADDRESS")
+    @Column(name = "CMP_ADDRESS")
     private String address;
 
-    @Column(name = "FIRM_DATEREGISTER")
+    @Column(name = "CMP_DATEREGISTER")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "firm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<User> users;
 
 }

@@ -30,7 +30,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query(value = "SELECT " +
             "ATT.ATT_ID,\n" +
             "USR.USR_ID,\n" +
-            "USR.FIRM_ID,\n" +
+            "USR.CMP_ID,\n" +
             "USR.USR_NAME,\n" +
             "ATT.ATT_DATETIME,\n" +
             "ATT.ATT_TYPE,\n" +
