@@ -44,7 +44,7 @@ public class ScheduleTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleTask.class);
 
     //    @Scheduled(cron = "0 59 23 L * ?")
-    @Scheduled(cron = "0 42 19 9 9 ?")
+    @Scheduled(cron = "0 52 12 10 9 ?")
     public void calculateWorkedHours() {
         LocalDate today = LocalDate.now();
         LocalDate firstDay = today.withDayOfMonth(1);

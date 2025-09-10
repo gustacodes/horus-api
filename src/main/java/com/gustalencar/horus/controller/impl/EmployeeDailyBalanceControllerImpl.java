@@ -4,6 +4,7 @@ import com.gustalencar.horus.controller.EmployeeDailyBalanceController;
 import com.gustalencar.horus.service.EmployeeDailyBalanceService;
 import lombok.RequiredArgsConstructor;
 import models.responses.EmployeeDailyBalancerResponse;
+import models.responses.UserCompanyEmployeeDailyBalanceResponse;
 import models.responses.UserHorusResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,5 +21,10 @@ public class EmployeeDailyBalanceControllerImpl implements EmployeeDailyBalanceC
     @Override
     public ResponseEntity<List<EmployeeDailyBalancerResponse>> findById(Long cmpId) {
         return ResponseEntity.status(OK).body(service.findAllByCompany(cmpId));
+    }
+
+    @Override
+    public ResponseEntity<List<UserCompanyEmployeeDailyBalanceResponse>> findUsersByCompanyAndEmployeeDailyBalance(final Long cmpId) {
+        return ResponseEntity.status(OK).body(service.findUsersByCompanyAndEmployeeDailyBalance(cmpId));
     }
 }

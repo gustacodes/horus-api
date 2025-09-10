@@ -62,9 +62,7 @@ public class AttendanceService {
         if (todayRecords.isEmpty()) {
             return AttendanceTypeEnum.ENTRY;
         }
-
         Attendance last = todayRecords.get(todayRecords.size() - 1);
-
         return switch (last.getType()) {
             case ENTRY -> AttendanceTypeEnum.LUNCH_OUT;
             case LUNCH_OUT -> AttendanceTypeEnum.LUNCH_IN;
@@ -74,9 +72,8 @@ public class AttendanceService {
         };
     }
 
-
-    public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf, final String data) {
-        return repository.adjustmentsHoursUser(cpf, data)
+    public List<AttendanceAdjustmentsUserResponse> adjustmentsUserResponse(final String cpf, final String date) {
+        return repository.adjustmentsHoursUser(cpf, date)
                 .stream()
                 .map(attendance -> {
                     var user = userService.find(attendance.getUser().getId());
@@ -137,6 +134,5 @@ public class AttendanceService {
         }
         return statusPoint;
     }
-
 
 }

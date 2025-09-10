@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import models.exceptions.StandardError;
 import models.responses.EmployeeDailyBalancerResponse;
+import models.responses.UserCompanyEmployeeDailyBalanceResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,12 @@ public interface EmployeeDailyBalanceController {
                             schema = @Schema(implementation = StandardError.class)))
     })
     ResponseEntity<List<EmployeeDailyBalancerResponse>> findById(
+            @Parameter(description = "Company id", required = true, example = "3")
+            @PathVariable(name = "cmpId") final Long cmpId);
+
+    @GetMapping("/teste/{cmpId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER', 'MANAGER')")
+    ResponseEntity<List<UserCompanyEmployeeDailyBalanceResponse>> findUsersByCompanyAndEmployeeDailyBalance(
             @Parameter(description = "Company id", required = true, example = "3")
             @PathVariable(name = "cmpId") final Long cmpId);
 }
