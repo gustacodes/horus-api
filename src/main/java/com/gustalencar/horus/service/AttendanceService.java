@@ -1,9 +1,9 @@
 package com.gustalencar.horus.service;
 
 import com.gustalencar.horus.entity.Attendance;
+import com.gustalencar.horus.infra.util.Util;
 import com.gustalencar.horus.mapper.AttendanceMapper;
 import com.gustalencar.horus.repository.AttendanceRepository;
-import com.gustalencar.horus.infra.util.Util;
 import lombok.RequiredArgsConstructor;
 import models.enums.AttendanceStatusEnum;
 import models.enums.AttendanceTypeEnum;
@@ -88,9 +88,9 @@ public class AttendanceService {
                             .attObservation(attendance.getObservation())
                             .attType(pointStatusUsers(attendance.getType().name()))
                             .attStatus(validationStatus(attendance.getStatus().name()))
-                            .usrProfile(functionUserInFirm(user.getCompanyOccupationId().getName()))
+                            .usrProfile(functionUserInCompany(user.getCompanyOccupationId().getName()))
                             .usrId(user.getId())
-                            .firmId(user.getCmpId().getId())
+                            .cmpId(user.getCmpId().getId())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -106,7 +106,7 @@ public class AttendanceService {
         repository.updateAdjustmentHourUser(hour, attId, type);
     }
 
-    private String functionUserInFirm(String function) {
+    private String functionUserInCompany(String function) {
         String profile = null;
         switch (function) {
             case "ROLE_GENERAL_SERVICES" -> profile = "SERVIÇOS GERAIS";

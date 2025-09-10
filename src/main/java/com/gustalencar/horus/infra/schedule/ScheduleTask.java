@@ -54,7 +54,7 @@ public class ScheduleTask {
 
         for (int i = 0; i < users.size(); i++) {
             var user = userService.findById(users.get(i).id());
-            LOGGER.info("Iniciado processo de horas trabalhadas: {} ", user.name());
+            LOGGER.info("INICIADO PROCESSO DE CONTABILIZAÇÃO DE HORAS DOS FUNCIONÁRIOS: {} ", user.name());
             System.out.println();
             for (LocalDate day = firstDay; !day.isAfter(lastDay); day = day.plusDays(1)) {
                 List<Attendance> records = attendanceRepository.findByUserAndDate(users.get(i).id(), day);
@@ -111,7 +111,7 @@ public class ScheduleTask {
                                 .updatedAt(now())
                                 .build();
                         dailyBalanceService.save(balance);
-                        LOGGER.info("Total trabalhadas de: {} : {} ", user.name(), new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
+                        LOGGER.info("PROCESSO FINALIZADO: {} : {} ", user.name(), new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
                         hoursUsers.add(new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
                     }
                 }
