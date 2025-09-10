@@ -11,6 +11,7 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = IGNORE, nullValueCheckStrategy = ALWAYS)
 public interface UserMapper {
+    @Mapping(target = "cmpId", source = "cmpId")
     UserHorusResponse fromEntity(final User entity);
 
     @Mapping(target = "id", ignore = true)

@@ -1,8 +1,9 @@
 package com.gustalencar.horus.service;
 
 import com.gustalencar.horus.entity.CompanyOccupation;
+import com.gustalencar.horus.infra.util.Util;
 import com.gustalencar.horus.mapper.CompanyOccupationMapper;
-import com.gustalencar.horus.repository.FirmRoleRespository;
+import com.gustalencar.horus.repository.CompanyOccupationRespository;
 import lombok.RequiredArgsConstructor;
 import models.exceptions.ResourceNotFoundException;
 import models.requests.CreateCompanyOccupationRequest;
@@ -16,14 +17,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompanyOccupationService {
 
-    private final FirmRoleRespository repository;
+    private final CompanyOccupationRespository repository;
     private final CompanyOccupationMapper mapper;
     private final CompanyService companyService;
 
-    public void save(CreateCompanyOccupationRequest firmRoleRequest) {
-        var firm = companyService.find(firmRoleRequest.coId());
-        CompanyOccupation companyOccupation = mapper.fromRequest(firmRoleRequest);
-        companyOccupation.setCompany(firm);
+    public void save(CreateCompanyOccupationRequest companyOccupationRequest) {
+        var company = companyService.find(companyOccupationRequest.cmpId());
+        CompanyOccupation companyOccupation = mapper.fromRequest(companyOccupationRequest);
+        companyOccupation.setName(Util.removeAccents(companyOccupationRequest.name()).toUpperCase());
+        companyOccupation.setDescription(Util.removeAccents(companyOccupationRequest.description().toUpperCase()));
+        companyOccupation.setCompany(company);
         repository.save(companyOccupation);
     }
 

@@ -41,7 +41,14 @@ public class Company {
     @Column(name = "CMP_DATEREGISTER")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cmpId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<User> users;
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            this.status = "A";
+        }
+    }
 
 }

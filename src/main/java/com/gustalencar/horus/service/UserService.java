@@ -5,6 +5,7 @@ import com.gustalencar.horus.infra.util.Util;
 import com.gustalencar.horus.mapper.UserMapper;
 import com.gustalencar.horus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import models.enums.UserRole;
 import models.exceptions.ResourceNotFoundException;
 import models.requests.CreateUserHorusRequest;
 import models.responses.UserHorusResponse;
@@ -42,8 +43,8 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List<UserHorusResponse> findAllByStatus(String status) {
-        return repository.findAllByStatus(status)
+    public List<UserHorusResponse> findAllByStatusAndRole(String status, UserRole role) {
+        return repository.findAllByStatusAndRole(status, role)
                 .stream()
                 .map(mapper::fromEntity)
                 .collect(Collectors.toList());
@@ -57,7 +58,7 @@ public class UserService {
         var role = companyOccupationService.find(request.companyOccupationId().coId());
         user.setName(Util.removeAccents(Util.removeAccents(request.name())).toUpperCase());
         user.setCompanyOccupationId(role);
-        user.setCompany(company);
+        user.setCmpId(company);
         user.setStatus(request.status());
         user.setFingerprint(fingerprintTemplate);
         repository.save(user);

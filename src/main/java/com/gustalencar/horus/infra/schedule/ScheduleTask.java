@@ -1,15 +1,22 @@
 package com.gustalencar.horus.infra.schedule;
 
 import com.gustalencar.horus.entity.Attendance;
+import com.gustalencar.horus.entity.Company;
+import com.gustalencar.horus.entity.EmployeeDailyBalance;
+import com.gustalencar.horus.entity.User;
 import com.gustalencar.horus.repository.AttendanceRepository;
 import com.gustalencar.horus.service.CompanyOccupationService;
+import com.gustalencar.horus.service.CompanyService;
 import com.gustalencar.horus.service.EmployeeDailyBalanceService;
 import com.gustalencar.horus.service.UserService;
 import lombok.RequiredArgsConstructor;
-import models.requests.CreateHorusEmployeeDailyBalance;
+import lombok.extern.slf4j.Slf4j;
+import models.enums.UserRole;
 import models.responses.CompanyOccupationHorusResponse;
 import models.responses.UserHorusResponse;
 import models.responses.WorkedHoursHorusResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,6 +31,7 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 
 @Component
+@Slf4j
 @EnableScheduling
 @RequiredArgsConstructor
 public class ScheduleTask {
@@ -31,18 +39,23 @@ public class ScheduleTask {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeDailyBalanceService dailyBalanceService;
     private final CompanyOccupationService companyOccupationService;
+    private final CompanyService companyService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleTask.class);
 
     //    @Scheduled(cron = "0 59 23 L * ?")
-    @Scheduled(cron = "0 29 15 8 9 ?")
+    @Scheduled(cron = "0 42 19 9 9 ?")
     public void calculateWorkedHours() {
         LocalDate today = LocalDate.now();
         LocalDate firstDay = today.withDayOfMonth(1);
         LocalDate lastDay = today.withDayOfMonth(today.lengthOfMonth());
         List<WorkedHoursHorusResponse> hoursUsers = new ArrayList<>();
-        List<UserHorusResponse> users = userService.findAllByStatus("A");
+        List<UserHorusResponse> users = userService.findAllByStatusAndRole("A", UserRole.USER);
 
         for (int i = 0; i < users.size(); i++) {
             var user = userService.findById(users.get(i).id());
+            LOGGER.info("Iniciado processo de horas trabalhadas: {} ", user.name());
+            System.out.println();
             for (LocalDate day = firstDay; !day.isAfter(lastDay); day = day.plusDays(1)) {
                 List<Attendance> records = attendanceRepository.findByUserAndDate(users.get(i).id(), day);
                 records.sort(Comparator.comparing(Attendance::getDateTime));
@@ -74,8 +87,8 @@ public class ScheduleTask {
                         totalWorked = Duration.between(entry, exit);
                     }
 
-                    List<CompanyOccupationHorusResponse> occupation = companyOccupationService.findAllByCompanyId(user.firm().id());
-                    String[] workload = occupation.get(i).workload().split(":");
+                    List<CompanyOccupationHorusResponse> occupation = companyOccupationService.findAllByCompanyId(user.cmpId().id());
+                    String[] workload = occupation.get(0).workload().split(":");
                     Duration expected = Duration.ofHours(Long.parseLong(workload[0])).plusMinutes(Long.parseLong(workload[1]));
 
                     Duration saldo = totalWorked.minus(expected);
@@ -84,9 +97,11 @@ public class ScheduleTask {
                     String message = gerarMensagemStatus(entry, lunchOut, lunchIn, exit);
                     if (message.equals("Complete records")) {
                         String balanceType = saldo.isNegative() ? "NEGATIVE" : saldo.isPositive() ? "POSITIVE" : saldo.isZero() ? "NORMAL" : "ZERO";
-                        var totalExtra = CreateHorusEmployeeDailyBalance.builder()
-                                .user(user)
-                                .firm(user.firm())
+                        User usr = userService.find(user.id());
+                        Company company = companyService.find(user.cmpId().id());
+                        EmployeeDailyBalance balance = EmployeeDailyBalance.builder()
+                                .user(usr)
+                                .company(company)
                                 .balanceDate(day)
                                 .workedSeconds(totalWorked.getSeconds())
                                 .expectedSeconds(expected.getSeconds())
@@ -95,8 +110,8 @@ public class ScheduleTask {
                                 .createdAt(now())
                                 .updatedAt(now())
                                 .build();
-                        dailyBalanceService.save(totalExtra);
-                        System.out.println(new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
+                        dailyBalanceService.save(balance);
+                        LOGGER.info("Total trabalhadas de: {} : {} ", user.name(), new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
                         hoursUsers.add(new WorkedHoursHorusResponse(formatDuration(totalWorked), formatDuration(extraToShow), formatDurationWithSign(saldo), message));
                     }
                 }

@@ -1,6 +1,7 @@
 package com.gustalencar.horus.repository;
 
 import com.gustalencar.horus.entity.User;
+import models.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
-    List<User> findAllByStatus(String status);
+    List<User> findAllByStatusAndRole(String status, UserRole role);
 }

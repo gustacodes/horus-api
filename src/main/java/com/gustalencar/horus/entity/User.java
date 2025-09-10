@@ -56,8 +56,8 @@ public class User implements Serializable, UserDetails {
     private UserRole role;
 
     @ManyToOne
-    @JoinColumn(name = "CMP_ID")
-    private Company company;
+    @JoinColumn(name = "CMP_ID", referencedColumnName = "CMP_ID")
+    private Company cmpId;
 
     @Lob
     @Column(name = "USR_FINGERPRINT")

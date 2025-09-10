@@ -44,14 +44,11 @@ public class AttendanceService {
 
     public void registerPoint(CreateAttendanceHorusRequest request) {
         var user = userService.find(request.userId());
-
         LocalDate today = LocalDate.now();
         List<Attendance> todayRecords = repository.findByUserAndDate(user.getId(), today);
-
         if (todayRecords.size() == 4) {
             throw new AmountOfPointsTheDayReached("Quantidade de batidas do dia atingida");
         }
-
         AttendanceTypeEnum nextType = determineNextType(todayRecords);
         Attendance attendance = mapper.fromRequest(request);
         attendance.setUser(user);
@@ -93,7 +90,7 @@ public class AttendanceService {
                             .attStatus(validationStatus(attendance.getStatus().name()))
                             .usrProfile(functionUserInFirm(user.getCompanyOccupationId().getName()))
                             .usrId(user.getId())
-                            .firmId(user.getCompany().getId())
+                            .firmId(user.getCmpId().getId())
                             .build();
                 })
                 .collect(Collectors.toList());

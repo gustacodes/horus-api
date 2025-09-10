@@ -1,6 +1,7 @@
 package com.gustalencar.horus.service;
 
 import com.gustalencar.horus.entity.Company;
+import com.gustalencar.horus.infra.util.Util;
 import com.gustalencar.horus.mapper.CompanyMapper;
 import com.gustalencar.horus.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,10 @@ public class CompanyService {
 
     public void save(CreateCompanyHorusRequest createFirmHorusRequest) {
         verifyIfCnpjAlreadyExists(createFirmHorusRequest.cnpj(), null);
-        repository.save(mapper.fromRequest(createFirmHorusRequest));
+        var company = mapper.fromRequest(createFirmHorusRequest);
+        company.setAddress(Util.removeAccents(createFirmHorusRequest.address().toUpperCase()));
+        company.setFirmName(Util.removeAccents(createFirmHorusRequest.companyName().toUpperCase()));
+        repository.save(company);
     }
 
     public Company find(final Long id) {

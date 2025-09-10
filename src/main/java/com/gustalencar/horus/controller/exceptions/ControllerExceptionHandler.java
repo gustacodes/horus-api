@@ -150,4 +150,26 @@ public class ControllerExceptionHandler {
                 .build());
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    ResponseEntity<StandardError> handleHttpMessageNotReadableException(final NullPointerException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(NOT_FOUND).body(StandardError.builder()
+                .timestamp(now())
+                .status(NOT_FOUND.value())
+                .error(NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    @ExceptionHandler(IndexOutOfBoundsException.class)
+    ResponseEntity<StandardError> handleHttpMessageNotReadableException(final IndexOutOfBoundsException ex, final HttpServletRequest request) {
+        return ResponseEntity.status(CONFLICT).body(StandardError.builder()
+                .timestamp(now())
+                .status(CONFLICT.value())
+                .error(CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build());
+    }
+
 }
