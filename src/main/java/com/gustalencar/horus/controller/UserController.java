@@ -54,4 +54,8 @@ public interface UserController {
     ResponseEntity<UserHorusResponse> findById(
             @Parameter(description = "User id", required = true, example = "1")
             @PathVariable(name = "id") final Long id);
+
+    @PostMapping("/teste/{email}/{message}/{subject}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER')")
+    ResponseEntity<Void> sendEmail(@PathVariable String email, @PathVariable String message, @PathVariable String subject);
 }

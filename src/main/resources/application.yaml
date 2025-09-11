@@ -3,6 +3,20 @@ spring:
     name: horus
   jackson:
     default-property-inclusion: non_null
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "systemhorus.result@gmail.com"
+    password: "pjdd vkcy ydny yksh"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   datasource:
     url: jdbc:postgresql://localhost:5432/horusdb
