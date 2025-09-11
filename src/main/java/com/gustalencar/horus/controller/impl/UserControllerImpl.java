@@ -1,6 +1,7 @@
 package com.gustalencar.horus.controller.impl;
 
 import com.gustalencar.horus.controller.UserController;
+import com.gustalencar.horus.infra.email.EmailService;
 import com.gustalencar.horus.service.UserService;
 import lombok.RequiredArgsConstructor;
 import models.requests.CreateUserHorusRequest;
@@ -16,6 +17,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserControllerImpl implements UserController {
 
     private final UserService service;
+    private final EmailService emailService;
 
     @Override
     public ResponseEntity<Void> save(CreateUserHorusRequest request, byte[] fingerprintTemplate) {
@@ -26,6 +28,12 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<UserHorusResponse> findById(final Long id) {
         return ResponseEntity.status(OK).body(service.findById(id));
+    }
+
+    @Override
+    public ResponseEntity<Void> sendEmail(String email, String message, String subject) {
+        emailService.enviarEmail(email, subject, message);
+        return ResponseEntity.ok().build();
     }
 
 }
