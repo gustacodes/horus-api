@@ -6,8 +6,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: "systemhorus.result@gmail.com"
-    password: "pjdd vkcy ydny yksh"
+    username: "${USERNAME_MAIL}"
+    password: "${PASSWORD_MAIL}"
     properties:
       mail:
         smtp:
@@ -19,9 +19,9 @@ spring:
           writetimeout: 5000
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/horusdb
-    username: postgres
-    password: 15421542
+    url: jdbc:postgresql://localhost:5432/${DB_NAME:horusdb}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:

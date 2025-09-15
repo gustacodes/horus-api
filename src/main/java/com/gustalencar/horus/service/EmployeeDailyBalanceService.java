@@ -68,14 +68,11 @@ public class EmployeeDailyBalanceService {
         }
 
         long absSeconds = Math.abs(totalSeconds);
-
         long hours = absSeconds / 3600;
         long minutes = (absSeconds % 3600) / 60;
-        long seconds = absSeconds % 60;
 
         return String.format("%s%02d:%02d", sign, hours, minutes);
     }
-
 
     private LocalDateTime toLocalDateTime(Object value) {
         if (value == null) return null;
@@ -94,6 +91,5 @@ public class EmployeeDailyBalanceService {
 
         throw new IllegalArgumentException("Tipo de data não suportado: " + value.getClass());
     }
-
 
 }
