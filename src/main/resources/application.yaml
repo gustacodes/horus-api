@@ -6,20 +6,17 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: "${USERNAME_MAIL}"
-    password: "${PASSWORD_MAIL}"
+    username: ${USERNAME_MAIL}
+    password: ${PASSWORD_MAIL}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:horusdb}
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -51,4 +48,4 @@ springdoc:
 
 auth:
   key:
-    secret: "$horus$"
+    secret: ${AUTH_SECRET}
