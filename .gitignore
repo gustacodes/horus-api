@@ -19,7 +19,8 @@ target/
 *.iml
 *.ipr
 *.env
-*.yml
+application.yaml
+docker-compose.yml
 
 ### NetBeans ###
 /nbproject/private/
