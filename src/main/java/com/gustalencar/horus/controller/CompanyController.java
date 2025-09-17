@@ -22,7 +22,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface CompanyController {
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('SUPER')")
     @Operation(summary = "Save new Company")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Company created"),
