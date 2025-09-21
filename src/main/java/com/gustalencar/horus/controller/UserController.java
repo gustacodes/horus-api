@@ -23,7 +23,7 @@ public interface UserController {
 
     @PostMapping
     @Operation(summary = "Save new user")
-    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN', 'OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
             @ApiResponse(responseCode = "400", description = "Bad Request",

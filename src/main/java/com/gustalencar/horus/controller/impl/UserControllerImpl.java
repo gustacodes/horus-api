@@ -32,7 +32,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Void> sendEmail(String email, String message, String subject) {
-        emailService.enviarEmail(email, subject, message);
+        emailService.sendEmail(email, subject, message);
         return ResponseEntity.ok().build();
     }
 

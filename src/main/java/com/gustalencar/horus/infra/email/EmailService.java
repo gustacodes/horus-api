@@ -20,7 +20,7 @@ public class EmailService {
     @Value("${spring.mail.password}")
     private String password;
 
-    public void enviarEmail(String receiver, String subject, String message) {
+    public void sendEmail(String receiver, String subject, String message) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");

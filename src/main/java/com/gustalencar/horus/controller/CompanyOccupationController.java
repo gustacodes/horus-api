@@ -22,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public interface CompanyOccupationController {
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('SUPER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER')")
     @Operation(summary = "Save new role in the company")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Company role created"),
