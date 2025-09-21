@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: horus
+
+  jackson:
+    default-property-inclusion: non_null
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${USERNAME_MAIL}
+    password: ${PASSWORD_MAIL}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: jdbc:mysql://horusystem-db.mysql.database.azure.com/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: HikariPool-1
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  sql:
+    init:
+      mode: always
+
+springdoc:
+  openapi:
+    title: 'HORUS API'
+    description: 'System responsible for employee timekeeping'
+    version: '1.0.0'
+
+auth:
+  key:
+    secret: ${AUTH_SECRET}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
